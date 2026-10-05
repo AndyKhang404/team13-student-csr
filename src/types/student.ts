@@ -15,3 +15,7 @@ export const AVAILABLE_MAJORS = [
 ] as const;
 
 export type Major = (typeof AVAILABLE_MAJORS)[number];
+
+export type StudentFormData = Partial<Student>;
+
+export type ValidationErrors = Partial<Record<keyof Student, string>>;
