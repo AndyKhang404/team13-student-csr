@@ -3,13 +3,13 @@ import studentsData from './students.json';
 import { AVAILABLE_MAJORS, type Student } from '../types/student';
 
 describe('Seed Student Data', () => {
-  const students: Student[] = studentsData;
+  const students: Student[] = studentsData as Student[];
 
   it('contains exactly 3 seed students', () => {
     expect(students).toHaveLength(3);
   });
 
-  it('contains all 3 members from README.md with correct attributes', () => {
+  it('contains all 3 students from README.md with correct attributes', () => {
     expect(students).toEqual([
       {
         id: '24127052',

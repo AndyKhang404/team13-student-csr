@@ -72,6 +72,18 @@ describe('EnrollmentForm', () => {
     expect(screen.getByText(VALIDATION_MESSAGES.EMAIL_FORMAT)).toBeInTheDocument();
   });
 
+  it('displays real-time inline validation feedback immediately on change without blur', async () => {
+    const user = userEvent.setup();
+    const onAddStudent = vi.fn();
+    render(<EnrollmentForm onAddStudent={onAddStudent} existingStudents={existingStudents} />);
+
+    const idInput = screen.getByLabelText(/student id/i);
+    await user.type(idInput, '123');
+
+    // Displays inline format error immediately while typing without blur (User Story 10)
+    expect(screen.getByRole('alert')).toHaveTextContent(VALIDATION_MESSAGES.ID_FORMAT);
+  });
+
   it('displays Uniqueness Violation error if student ID already exists', async () => {
     const user = userEvent.setup();
     const onAddStudent = vi.fn();
@@ -81,7 +93,7 @@ describe('EnrollmentForm', () => {
     await user.type(idInput, '24127052');
     await user.tab();
 
-    expect(screen.getByRole('alert')).toHaveTextContent(VALIDATION_MESSAGES.ID_DUPLICATE);
+    expect(screen.getByRole('alert')).toHaveTextContent(VALIDATION_MESSAGES.ID_UNIQUENESS_VIOLATION);
   });
 
   it('clears error message when input is corrected', async () => {

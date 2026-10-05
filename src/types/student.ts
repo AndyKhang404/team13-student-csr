@@ -1,10 +1,3 @@
-export interface Student {
-  id: string;
-  name: string;
-  email: string;
-  major: string;
-}
-
 export const AVAILABLE_MAJORS = [
   'Computer Science',
   'Software Engineering',
@@ -16,6 +9,18 @@ export const AVAILABLE_MAJORS = [
 
 export type Major = (typeof AVAILABLE_MAJORS)[number];
 
-export type StudentFormData = Partial<Student>;
+export interface Student {
+  id: string;
+  name: string;
+  email: string;
+  major: Major;
+}
+
+export interface StudentFormData {
+  id?: string;
+  name?: string;
+  email?: string;
+  major?: Major | string;
+}
 
 export type ValidationErrors = Partial<Record<keyof Student, string>>;

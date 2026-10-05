@@ -12,7 +12,7 @@ The **CSR Student Portal** is designed around pure Client-Side Rendering (CSR) p
 - **Consequence**: No server roundtrips are incurred during enrollment actions. All state persists in memory throughout the user session.
 
 ### 2. State Ownership Hierarchy
-- **Context**: Several components require access to student data (roster table, metrics, uniqueness check in enrollment form).
+- **Context**: Several components require access to student data (Student Roster, metrics, uniqueness check in enrollment form).
 - **Decision**: The root component (`App`) serves as the single source of truth for the `students` collection. `EnrollmentForm` retains its own transient form state (`formData` and `errors`).
 - **Consequence**: High cohesion, minimal prop-drilling, and clear unidirectional data flow.
 
@@ -39,9 +39,7 @@ flowchart TD
     end
 
     subgraph RosterComp ["StudentRoster Component"]
-        StudentRoster["StudentRoster"]
-        RosterTable["Roster Table (Presenter)"]
-        StudentRoster --- RosterTable
+        StudentRoster["Student Roster (Presenter)"]
     end
 
     App -->|"props: onAddStudent (callback)"| EnrollmentForm
@@ -77,7 +75,7 @@ sequenceDiagram
     Form->>App: Calls onAddStudent(newStudent)
     Note over App: App updates students state: setStudents(prev => [...prev, newStudent])
     App->>Roster: Passes updated students prop
-    Roster-->>User: Renders updated roster table immediately in DOM
+    Roster-->>User: Renders updated Student Roster immediately in DOM
 
     Form->>Form: Resets formData to initial values & clears errors
     Form-->>User: Form fields cleared for next registration

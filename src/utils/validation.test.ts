@@ -5,6 +5,7 @@ import {
   validateStudentName,
   validateStudentEmail,
   validateStudentMajor,
+  validateStudentField,
   validateStudentForm,
   VALIDATION_MESSAGES,
 } from './validation';
@@ -51,7 +52,7 @@ describe('Validation Engine', () => {
 
     it('returns Uniqueness Violation error when student ID already exists in the roster', () => {
       const error = validateStudentId('24127052', sampleStudents);
-      expect(error).toBe(VALIDATION_MESSAGES.ID_DUPLICATE);
+      expect(error).toBe(VALIDATION_MESSAGES.ID_UNIQUENESS_VIOLATION);
       expect(error).toContain('Uniqueness Violation');
     });
 
@@ -157,7 +158,7 @@ describe('Validation Engine', () => {
       };
 
       const errors = validateStudentForm(duplicateData, sampleStudents);
-      expect(errors.id).toBe(VALIDATION_MESSAGES.ID_DUPLICATE);
+      expect(errors.id).toBe(VALIDATION_MESSAGES.ID_UNIQUENESS_VIOLATION);
       expect(errors.id).toContain('Uniqueness Violation');
       expect(errors.name).toBeUndefined();
       expect(errors.email).toBeUndefined();
@@ -189,6 +190,39 @@ describe('Validation Engine', () => {
       expect(errors.id).toBe(VALIDATION_MESSAGES.ID_REQUIRED);
       expect(errors.email).toBe(VALIDATION_MESSAGES.EMAIL_REQUIRED);
       expect(errors.major).toBe(VALIDATION_MESSAGES.MAJOR_REQUIRED);
+    });
+  });
+
+  describe('validateStudentField', () => {
+    it('delegates validation for student ID field', () => {
+      expect(validateStudentField('id', '', sampleStudents)).toBe(VALIDATION_MESSAGES.ID_REQUIRED);
+      expect(validateStudentField('id', '123', sampleStudents)).toBe(VALIDATION_MESSAGES.ID_FORMAT);
+      expect(validateStudentField('id', '24127052', sampleStudents)).toBe(
+        VALIDATION_MESSAGES.ID_UNIQUENESS_VIOLATION
+      );
+      expect(validateStudentField('id', '24127999', sampleStudents)).toBeNull();
+    });
+
+    it('delegates validation for student name field', () => {
+      expect(validateStudentField('name', '', sampleStudents)).toBe(VALIDATION_MESSAGES.NAME_REQUIRED);
+      expect(validateStudentField('name', 'A', sampleStudents)).toBe(VALIDATION_MESSAGES.NAME_MIN_LENGTH);
+      expect(validateStudentField('name', 'Phùng Bảo Khang', sampleStudents)).toBeNull();
+    });
+
+    it('delegates validation for student email field', () => {
+      expect(validateStudentField('email', '', sampleStudents)).toBe(VALIDATION_MESSAGES.EMAIL_REQUIRED);
+      expect(validateStudentField('email', 'notanemail', sampleStudents)).toBe(
+        VALIDATION_MESSAGES.EMAIL_FORMAT
+      );
+      expect(validateStudentField('email', 'test@student.hcmus.edu.vn', sampleStudents)).toBeNull();
+    });
+
+    it('delegates validation for student major field', () => {
+      expect(validateStudentField('major', '', sampleStudents)).toBe(VALIDATION_MESSAGES.MAJOR_REQUIRED);
+      expect(validateStudentField('major', 'UnknownMajor', sampleStudents)).toBe(
+        VALIDATION_MESSAGES.MAJOR_INVALID
+      );
+      expect(validateStudentField('major', 'Computer Science', sampleStudents)).toBeNull();
     });
   });
 });

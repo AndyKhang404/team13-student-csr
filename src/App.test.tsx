@@ -141,7 +141,7 @@ describe('App Integration', () => {
 
     // Uniqueness Violation error is displayed
     const errorAlert = screen.getByRole('alert');
-    expect(errorAlert).toHaveTextContent(VALIDATION_MESSAGES.ID_DUPLICATE);
+    expect(errorAlert).toHaveTextContent(VALIDATION_MESSAGES.ID_UNIQUENESS_VIOLATION);
 
     // Roster count is still initial count
     const totalBadges = screen.getAllByText(String(initialStudents.length));
@@ -268,7 +268,7 @@ describe('App Integration', () => {
     await user.click(submitButton);
 
     expect(screen.getByRole('alert')).toHaveTextContent(
-      VALIDATION_MESSAGES.ID_DUPLICATE
+      VALIDATION_MESSAGES.ID_UNIQUENESS_VIOLATION
     );
     expect(within(table).queryByText('Another Long')).not.toBeInTheDocument();
   });

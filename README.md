@@ -16,7 +16,7 @@ A modern, responsive Client-Side Rendered (CSR) Single-Page Application (SPA) fo
 The **CSR Student Portal** provides a lightweight, highly responsive interface for viewing and enrolling students. Traditional multi-page web applications suffer from disorienting full-page reloads, server document roundtrips, flash-of-unstyled-content (FOUC), and loss of transient form state.
 
 This portal is implemented using a pure **Client-Side Rendering (CSR)** architecture:
-- **Single Source of Truth**: The client-side React state is the authoritative data source throughout the session, initialized with pre-seeded student records from [`src/data/students.json`](file:///home/pbkhang404/Documents/HCMUS/Y3/S1/web/team13-student-csr/src/data/students.json).
+- **Single Source of Truth**: The client-side React state is the authoritative data source throughout the session, initialized with pre-seeded students from [`src/data/students.json`](file:///home/pbkhang404/Documents/HCMUS/Y3/S1/web/team13-student-csr/src/data/students.json).
 - **Instant Client-Side Validation**: Field inputs (Student ID format, duplicate ID uniqueness against roster, name length, email syntax, major selection) are validated in real time on change, blur, and submit.
 - **Zero Document Requests**: Form submissions intercept default browser navigation via `event.preventDefault()`, directly updating client memory and immediately re-rendering the roster without HTTP document roundtrips.
 - **Accessible & Modern UI**: Built with React 18, TypeScript, Tailwind CSS, and Vite, featuring responsive layouts, semantic HTML, and ARIA alert attributes.
@@ -37,7 +37,7 @@ The portal enforces a clean separation of concerns with a clear state ownership 
   - On valid submission, invokes the `onAddStudent` callback and resets local form fields to initial values.
 - **`StudentRoster` Component**:
   - Stateless presentation component receiving `students` as props.
-  - Renders the student table, total count badges, and major badges.
+  - Renders the Student Roster, total count badges, and major badges.
 
 ### Component & State Ownership Diagram
 
@@ -64,9 +64,7 @@ flowchart TD
     end
 
     subgraph RosterComp ["StudentRoster Component"]
-        StudentRoster["StudentRoster"]
-        RosterTable["Roster Table (Presenter)"]
-        StudentRoster --- RosterTable
+        StudentRoster["Student Roster (Presenter)"]
     end
 
     App -->|"props: onAddStudent (callback)"| EnrollmentForm
@@ -114,7 +112,7 @@ sequenceDiagram
     Form->>App: Calls onAddStudent(newStudent)
     Note over App: App updates students state: setStudents(prev => [...prev, newStudent])
     App->>Roster: Passes updated students prop
-    Roster-->>User: Renders updated roster table immediately in DOM
+    Roster-->>User: Renders updated Student Roster immediately in DOM
 
     Form->>Form: Resets formData to initial values & clears errors
     Form-->>User: Form fields cleared for next registration

@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import {
   AVAILABLE_MAJORS,
+  type Major,
   type Student,
   type ValidationErrors,
 } from '../types/student';
 import {
-  validateStudentEmail,
+  validateStudentField,
   validateStudentForm,
-  validateStudentId,
-  validateStudentMajor,
-  validateStudentName,
 } from '../utils/validation';
 
 export interface EnrollmentFormProps {
@@ -17,7 +15,14 @@ export interface EnrollmentFormProps {
   existingStudents: Student[];
 }
 
-const INITIAL_FORM_STATE = {
+interface FormState {
+  id: string;
+  name: string;
+  email: string;
+  major: string;
+}
+
+const INITIAL_FORM_STATE: FormState = {
   id: '',
   name: '',
   email: '',
@@ -28,25 +33,11 @@ export default function EnrollmentForm({
   onAddStudent,
   existingStudents,
 }: EnrollmentFormProps) {
-  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
+  const [formData, setFormData] = useState<FormState>(INITIAL_FORM_STATE);
   const [errors, setErrors] = useState<ValidationErrors>({});
 
-  const validateField = (name: keyof typeof INITIAL_FORM_STATE, value: string) => {
-    let error: string | null = null;
-    switch (name) {
-      case 'id':
-        error = validateStudentId(value, existingStudents);
-        break;
-      case 'name':
-        error = validateStudentName(value);
-        break;
-      case 'email':
-        error = validateStudentEmail(value);
-        break;
-      case 'major':
-        error = validateStudentMajor(value);
-        break;
-    }
+  const validateField = (name: keyof Student, value: string) => {
+    const error = validateStudentField(name, value, existingStudents);
 
     setErrors((prev) => {
       const updated = { ...prev };
@@ -63,20 +54,18 @@ export default function EnrollmentForm({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    const fieldName = name as keyof typeof INITIAL_FORM_STATE;
+    const fieldName = name as keyof Student;
     setFormData((prev) => ({ ...prev, [fieldName]: value }));
 
-    // Real-time error clearing / re-validation if the field currently has an error
-    if (errors[fieldName]) {
-      validateField(fieldName, value);
-    }
+    // Real-time inline validation feedback triggers immediately on input change
+    validateField(fieldName, value);
   };
 
   const handleBlur = (
     e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    validateField(name as keyof typeof INITIAL_FORM_STATE, value);
+    validateField(name as keyof Student, value);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -92,7 +81,7 @@ export default function EnrollmentForm({
       id: formData.id.trim(),
       name: formData.name.trim(),
       email: formData.email.trim(),
-      major: formData.major.trim(),
+      major: formData.major.trim() as Major,
     });
 
     setFormData(INITIAL_FORM_STATE);

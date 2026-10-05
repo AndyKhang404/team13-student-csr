@@ -1,10 +1,10 @@
-import type { Student } from '../types/student';
+import type { Major, Student } from '../types/student';
 
 export interface StudentRosterProps {
   students: Student[];
 }
 
-const getMajorBadgeStyle = (major: string): string => {
+const getMajorBadgeStyle = (major: Major | string): string => {
   switch (major) {
     case 'Computer Science':
       return 'bg-blue-100 text-blue-800 border-blue-200';

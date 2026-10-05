@@ -16,7 +16,8 @@ export const EMAIL_REGEX =
 export const VALIDATION_MESSAGES = {
   ID_REQUIRED: 'Student ID is required.',
   ID_FORMAT: 'Student ID must be exactly 8 digits.',
-  ID_DUPLICATE: 'Uniqueness Violation: A student with this ID already exists in the Student Roster.',
+  ID_UNIQUENESS_VIOLATION:
+    'Uniqueness Violation: A student with this ID already exists in the Student Roster.',
   NAME_REQUIRED: 'Student name is required.',
   NAME_MIN_LENGTH: 'Student name must be at least 2 characters.',
   EMAIL_REQUIRED: 'Email is required.',
@@ -46,7 +47,7 @@ export const validateStudentId = (
 
   const isDuplicate = existingStudents.some((student) => student.id === trimmedId);
   if (isDuplicate) {
-    return VALIDATION_MESSAGES.ID_DUPLICATE;
+    return VALIDATION_MESSAGES.ID_UNIQUENESS_VIOLATION;
   }
 
   return null;
@@ -106,33 +107,44 @@ export const validateStudentMajor = (major: string): string | null => {
 };
 
 /**
+ * Validates a single student field by name:
+ * Delegates to the corresponding individual validator.
+ */
+export const validateStudentField = (
+  name: keyof Student,
+  value: string,
+  existingStudents: Student[] = []
+): string | null => {
+  switch (name) {
+    case 'id':
+      return validateStudentId(value, existingStudents);
+    case 'name':
+      return validateStudentName(value);
+    case 'email':
+      return validateStudentEmail(value);
+    case 'major':
+      return validateStudentMajor(value);
+    default:
+      return null;
+  }
+};
+
+/**
  * Validates all student form fields and aggregates any validation errors.
  * Returns an empty object if all fields are valid.
  */
 export const validateStudentForm = (
-  formData: Partial<Student>,
+  formData: StudentFormData,
   existingStudents: Student[] = []
 ): ValidationErrors => {
   const errors: ValidationErrors = {};
+  const fields: (keyof Student)[] = ['id', 'name', 'email', 'major'];
 
-  const idError = validateStudentId(formData.id ?? '', existingStudents);
-  if (idError) {
-    errors.id = idError;
-  }
-
-  const nameError = validateStudentName(formData.name ?? '');
-  if (nameError) {
-    errors.name = nameError;
-  }
-
-  const emailError = validateStudentEmail(formData.email ?? '');
-  if (emailError) {
-    errors.email = emailError;
-  }
-
-  const majorError = validateStudentMajor(formData.major ?? '');
-  if (majorError) {
-    errors.major = majorError;
+  for (const field of fields) {
+    const error = validateStudentField(field, formData[field] ?? '', existingStudents);
+    if (error) {
+      errors[field] = error;
+    }
   }
 
   return errors;
