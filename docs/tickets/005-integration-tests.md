@@ -1,7 +1,7 @@
 # Ticket 005: High-Level Integration Tests
 
-## Status: BLOCKED
-## Blocked By: Ticket 004
+## Status: COMPLETED
+## Blocked By: None (Ticket 004 completed)
 
 ## Description
 Implement the high-level integration test suite at the `<App />` root seam using Vitest and React Testing Library.

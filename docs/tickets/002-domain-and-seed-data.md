@@ -1,7 +1,7 @@
 # Ticket 002: Domain Entity & Seed Data
 
-## Status: BLOCKED
-## Blocked By: Ticket 001
+## Status: COMPLETED
+## Blocked By: None (Ticket 001 completed)
 
 ## Description
 Define domain models for `Student` and initial seed data extracted from `README.md`.
